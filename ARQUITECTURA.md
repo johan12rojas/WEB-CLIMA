@@ -1,119 +1,182 @@
-# 📐 Arquitectura de la Aplicación - Clima App
+# 📐 Arquitectura de la Aplicación – Clima App
 
 **Proyecto:** Aplicación Web del Clima  
-**Autor:** Estudiante de Ingeniería de Sistemas - 7mo Semestre  
+**Autor:** Estudiante de Ingeniería de Sistemas – 7mo Semestre  
 **Tecnología:** React.js con Vite
 
 ---
 
 ## 🎯 Introducción
 
-Tenía que elegir una API de las opciones que me dieron, y me interesó la API del Clima de OpenWeatherMap. Me pareció la mejor opción de las que había según mis gustos, además de que hace tiempo quería desarrollar una web del clima con interfaz tipo iOS.
+Entre las diferentes opciones disponibles, elegí trabajar con la API de OpenWeatherMap porque me pareció una alternativa interesante para explorar el consumo de servicios externos y el manejo de datos en tiempo real. Además, ofrecía una buena oportunidad para aplicar lo aprendido en React y crear una interfaz moderna con un diseño inspirado en el estilo visual de iOS.
 
-Como he venido trabajando en proyectos con React y Node, se me hizo muy interesante empezar con React para este proyecto. La idea era crear algo funcional pero con un diseño bonito, tipo iOS, que se viera profesional y moderno.
+Durante el desarrollo, consulté la documentación oficial de la API, lo que me permitió comprender en detalle cómo funcionan sus distintos endpoints, parámetros y limitaciones. A medida que avanzaba, surgieron algunos inconvenientes técnicos, principalmente relacionados con la obtención de coordenadas y el tratamiento de errores en las respuestas. En esos casos, recurrí al apoyo de herramientas de Inteligencia Artificial, que me ayudaron a encontrar soluciones, depurar el código y optimizar la lógica de consumo de la API.
 
-**Una cosa importante:** Usé Inteligencia Artificial para ayudarme con el diseño visual y mejorar la interfaz. La IA me ayudó a optimizar el glassmorphism, mejorar la distribución de componentes y sugerir mejoras en la experiencia de usuario. Esto me permitió crear un diseño más atractivo y funcional del que habría logrado por mi cuenta.
+Gracias a mi experiencia previa con React y Node.js, pude centrarme tanto en la funcionalidad como en el diseño visual. La IA también fue de gran utilidad en esta parte, ya que me permitió ajustar los efectos de glassmorphism, mejorar la distribución de los componentes y lograr una interfaz más equilibrada y profesional.
+
+---
+
+## 🏛️ Patrón Arquitectónico
+
+Este proyecto no sigue un patrón arquitectónico tradicional estricto como MVC o MVP, sino que utiliza una **combinación de patrones adaptados a React**, enfocándose en la separación de responsabilidades y la modularidad.
+
+### Patrones Aplicados
+
+1. **Component-Based Architecture (Arquitectura Basada en Componentes)**
+   - La aplicación está construida como un conjunto de componentes React reutilizables
+   - Cada componente tiene una responsabilidad única (presentación, lógica de UI)
+   - Los componentes se comunican mediante props y callbacks
+
+2. **Service Layer Pattern (Patrón de Capa de Servicio)**
+   - La lógica de negocio y comunicación con APIs está separada en servicios (`WeatherAPI.js`, `StorageService.js`)
+   - Los componentes no interactúan directamente con APIs, sino a través de servicios
+   - Esto facilita el mantenimiento y testing
+
+3. **Custom Hooks Pattern (Patrón de Hooks Personalizados)**
+   - La lógica de estado y efectos se encapsula en hooks reutilizables
+   - Los hooks actúan como una capa intermedia entre componentes y servicios
+   - Permiten compartir lógica entre componentes sin duplicación
+
+4. **Model/Entity Pattern (Patrón de Modelos)**
+   - Las estructuras de datos están definidas como clases (`Weather`, `Forecast`, `City`)
+   - Los modelos encapsulan la lógica de transformación y formateo de datos
+   - Proporcionan una interfaz consistente para trabajar con los datos
+
+5. **Separation of Concerns (Separación de Responsabilidades)**
+   - Cada capa tiene una función específica:
+     - **Componentes**: Presentación y UI
+     - **Hooks**: Lógica de estado y efectos
+     - **Servicios**: Comunicación externa y lógica de negocio
+     - **Modelos**: Estructura y validación de datos
+     - **Config**: Configuración centralizada
+
+### Flujo de Datos
+
+```
+Usuario → Componente → Hook → Servicio → API Externa
+                    ↓
+              Modelo (transformación)
+                    ↓
+              Hook (actualiza estado)
+                    ↓
+              Componente (re-render)
+```
+
+Este enfoque híbrido es común en aplicaciones React modernas y permite:
+- **Mantenibilidad**: Código organizado y fácil de entender
+- **Escalabilidad**: Fácil agregar nuevas funcionalidades
+- **Testabilidad**: Cada capa se puede probar independientemente
+- **Reutilización**: Componentes y hooks se pueden usar en múltiples lugares
 
 ---
 
 ## 📁 Estructura del Proyecto
 
-Organicé todo en carpetas para que sea fácil de entender y mantener. La estructura quedó así:
+Para mantener el orden y facilitar la comprensión del código, organicé el proyecto en carpetas según su responsabilidad. La estructura general quedó así:
 
 ```
-ARQUITECTURA- API/
-├── index.html              # La página HTML principal
-├── package.json            # Dependencias del proyecto
-├── vite.config.js         # Configuración de Vite
+ARQUITECTURA-API/
+├── index.html
+├── package.json
+├── vite.config.js
 ├── src/
-│   ├── main.jsx           # Aquí empieza React
-│   ├── app/               # La aplicación principal
-│   │   ├── App.jsx        # Componente que coordina todo
-│   │   └── App.css        # Estilos globales
-│   ├── config/            # Configuraciones
-│   │   ├── config.js      # URLs de API, claves, etc.
-│   │   └── videos.js      # URLs de los videos de fondo
-│   ├── components/        # Componentes de React
-│   │   ├── css/           # Estilos de cada componente
-│   │   └── jsx/           # Los componentes JSX
-│   ├── hooks/             # Hooks personalizados (lógica reutilizable)
+│   ├── main.jsx
+│   ├── app/
+│   │   ├── App.jsx
+│   │   └── App.css
+│   ├── config/
+│   │   ├── config.js
+│   │   └── videos.js
+│   ├── components/
+│   │   ├── css/
+│   │   │   ├── Clock.css
+│   │   │   ├── ErrorMessage.css
+│   │   │   ├── FavoritesList.css
+│   │   │   ├── ForecastList.css
+│   │   │   ├── HistoryList.css
+│   │   │   ├── LoadingSpinner.css
+│   │   │   ├── SearchBar.css
+│   │   │   ├── WeatherCard.css
+│   │   │   └── WeatherVideoBackground.css
+│   │   └── jsx/
+│   │       ├── Clock.jsx
+│   │       ├── ErrorMessage.jsx
+│   │       ├── FavoritesList.jsx
+│   │       ├── ForecastList.jsx
+│   │       ├── HistoryList.jsx
+│   │       ├── LoadingSpinner.jsx
+│   │       ├── SearchBar.jsx
+│   │       ├── WeatherCard.jsx
+│   │       └── WeatherVideoBackground.jsx
+│   ├── hooks/
 │   │   ├── useWeather.js
 │   │   ├── useFavorites.js
 │   │   └── useGeolocation.js
-│   ├── models/            # Modelos de datos (clases)
+│   ├── models/
 │   │   ├── Weather.js
 │   │   ├── Forecast.js
 │   │   └── City.js
-│   ├── services/          # Servicios (API y storage)
+│   ├── services/
 │   │   ├── WeatherAPI.js
 │   │   └── StorageService.js
-│   └── img/               # Imágenes
+│   └── img/
+│       └── icon.webp
 ```
 
-### ¿Por qué así?
+### Justificación de la Estructura
 
-La idea es separar las cosas por responsabilidad:
-- **components/**: Todo lo visual (botones, tarjetas, listas)
-- **hooks/**: Lógica que se puede reutilizar
-- **services/**: Comunicación con APIs y almacenamiento
-- **models/**: Estructuras de datos
-- **config/**: Configuraciones centralizadas
+Cada carpeta cumple una función específica:
 
-Esto hace que sea más fácil encontrar las cosas y modificar el código sin romper otras partes.
+- **`components/`**: contiene los elementos visuales como botones, tarjetas o listas. Se organizó en `css/` para estilos y `jsx/` para componentes React.
+- **`hooks/`**: agrupa la lógica reutilizable que encapsula el comportamiento de la aplicación.
+- **`services/`**: maneja la comunicación con la API y el almacenamiento local.
+- **`models/`**: define las estructuras de datos que representan las entidades del dominio.
+- **`config/`**: centraliza las configuraciones generales del proyecto (API keys, URLs, etc.).
+
+Esta organización facilita la lectura, el mantenimiento y la escalabilidad del código.
 
 ---
 
-## 🔌 Cómo Consumo la API de OpenWeatherMap
+## 🔌 Consumo de la API de OpenWeatherMap
 
-Esta es la parte más importante del proyecto. Te explico cómo funciona:
+El consumo de la API fue el eje central del proyecto. Para comprender su funcionamiento, dediqué tiempo a revisar la documentación oficial, especialmente las secciones relacionadas con las peticiones al endpoint `/weather`, el uso de coordenadas y el manejo de respuestas JSON.
 
-### El Problema Inicial
+### La API que Uso
 
-OpenWeatherMap tiene varias APIs:
-1. **API tradicional** (`/weather` y `/forecast`) - Funciona con nombre de ciudad
-2. **One Call API 3.0** - Más completa pero requiere coordenadas y suscripción
-3. **Geocoding API** - Convierte nombres de ciudades a coordenadas
+OpenWeatherMap tiene varias APIs, pero como no tengo suscripción, uso solo la **API tradicional** que funciona gratis:
+- **`/weather`** - Para obtener el clima actual de una ciudad
+- **`/forecast`** - Para obtener el pronóstico de 5 días
 
-### Mi Solución
-
-Creé un sistema que intenta usar la mejor API disponible, pero si no funciona, hace un fallback automático a la tradicional. Así la app siempre funciona.
+Esta API funciona directamente con el nombre de la ciudad o con coordenadas, entonces no necesito Geocoding ni One Call API.
 
 ### El Servicio WeatherAPI
 
-Este es el corazón de la comunicación con la API. Está en `services/WeatherAPI.js`.
+Este es el corazón de la comunicación con la API. Está en `services/WeatherAPI.js` y gestiona toda la comunicación con OpenWeatherMap.
 
 #### Proceso de Búsqueda
 
 Cuando el usuario busca una ciudad, pasa esto:
 
-**1. Geocoding - Convertir nombre a coordenadas**
+**1. Obtener clima actual**
 ```javascript
 // El usuario busca "Bogotá"
-geocodeCity("Bogotá")
+getCurrentWeather("Bogotá")
   ↓
 // Hace una petición a:
-GET https://api.openweathermap.org/geo/1.0/direct?q=Bogotá&limit=1&appid=mi_key
+GET https://api.openweathermap.org/data/2.5/weather?q=Bogotá&appid=mi_key&units=metric&lang=es
   ↓
-// Recibe: { lat: 4.6097, lon: -74.0817, name: "Bogotá", country: "CO" }
+// Recibe: Datos del clima actual (temperatura, humedad, viento, etc.)
 ```
 
-**2. One Call API - Obtener datos completos**
+**2. Obtener pronóstico**
 ```javascript
-// Con las coordenadas, busca el clima completo
-getOneCallWeather(4.6097, -74.0817)
+// Después busca el pronóstico de 5 días
+getForecast("Bogotá")
   ↓
 // Hace una petición a:
-GET https://api.openweathermap.org/data/3.0/onecall?lat=4.6097&lon=-74.0817&appid=mi_key
+GET https://api.openweathermap.org/data/2.5/forecast?q=Bogotá&appid=mi_key&units=metric&lang=es
   ↓
-// Recibe: Datos actuales + pronóstico de 7 días + más información
-```
-
-**3. Si One Call falla → Fallback automático**
-```javascript
-// Si One Call no está disponible (sin suscripción, error 401, etc.)
-// Automáticamente usa la API tradicional:
-getCurrentWeather("Bogotá")  // Clima actual
-getForecast("Bogotá")         // Pronóstico de 5 días
+// Recibe: Pronóstico de 5 días con datos cada 3 horas
 ```
 
 ### El Hook useWeather
@@ -122,22 +185,16 @@ Este hook es el que coordina todo. Está en `hooks/useWeather.js` y funciona as�
 
 ```javascript
 const searchWeather = async (cityName) => {
-  // 1. Primero convierto el nombre a coordenadas
-  const location = await weatherAPI.geocodeCity(cityName);
+  // 1. Obtengo el clima actual directamente con el nombre de la ciudad
+  const currentData = await weatherAPI.getCurrentWeather(cityName);
+  setWeather(new Weather(currentData));
   
-  // 2. Intento usar One Call API (la mejor)
-  const oneCallData = await weatherAPI.getOneCallWeather(location.lat, location.lon);
-  
-  // 3. Si funcionó, uso esos datos
-  if (oneCallData) {
-    const currentData = weatherAPI.convertOneCallToTraditional(oneCallData);
-    setWeather(new Weather(currentData));
-    // ... proceso el pronóstico
-  } 
-  // 4. Si no funcionó, uso la API tradicional (fallback)
-  else {
-    const currentData = await weatherAPI.getCurrentWeather(cityName);
-    setWeather(new Weather(currentData));
+  // 2. Obtengo el pronóstico de 5 días
+  try {
+    const forecastData = await weatherAPI.getForecast(cityName);
+    setForecast(forecastData.map(item => new Forecast(item)));
+  } catch (forecastErr) {
+    setForecast([]);
   }
 }
 ```
@@ -149,14 +206,14 @@ Vamos a ver qué pasa cuando alguien busca "Medellín":
 1. Usuario escribe "Medellín" y presiona buscar
 2. `SearchBar` llama a `handleSearch("Medellín")` en `App.jsx`
 3. `App.jsx` llama a `searchWeather("Medellín")` del hook `useWeather`
-4. `useWeather` llama a `geocodeCity("Medellín")` en `WeatherAPI`
-5. `WeatherAPI` hace petición HTTP → `GET /geo/1.0/direct?q=Medellín`
-6. OpenWeatherMap responde con: `{lat: 6.2476, lon: -75.5658, name: "Medellín", country: "CO"}`
-7. `useWeather` llama a `getOneCallWeather(6.2476, -75.5658)`
-8. `WeatherAPI` hace petición HTTP → `GET /data/3.0/onecall?lat=6.2476&lon=-75.5658`
-9. OpenWeatherMap responde con datos completos del clima
-10. `WeatherAPI` convierte los datos a formato estándar usando `convertOneCallToTraditional()`
-11. `useWeather` crea objetos `Weather` y `Forecast` usando los modelos
+4. `useWeather` llama a `getCurrentWeather("Medellín")` en `WeatherAPI`
+5. `WeatherAPI` hace petición HTTP → `GET /data/2.5/weather?q=Medellín&appid=mi_key`
+6. OpenWeatherMap responde con datos del clima actual
+7. `useWeather` crea objeto `Weather` con esos datos
+8. `useWeather` llama a `getForecast("Medellín")` para el pronóstico
+9. `WeatherAPI` hace petición HTTP → `GET /data/2.5/forecast?q=Medellín&appid=mi_key`
+10. OpenWeatherMap responde con pronóstico de 5 días
+11. `useWeather` procesa los datos y crea objetos `Forecast`
 12. React actualiza el estado y re-renderiza los componentes
 13. El usuario ve: "Medellín, CO - 22°C - Nublado"
 
@@ -164,112 +221,153 @@ Vamos a ver qué pasa cuando alguien busca "Medellín":
 
 El código maneja diferentes tipos de errores:
 
-- **404 (Ciudad no encontrada)**: Muestra "Ciudad no encontrada"
-- **401 (API Key inválida o sin suscripción)**: Hace fallback automático a API tradicional
-- **429 (Demasiadas peticiones)**: Muestra "Límite de peticiones excedido"
-- **Error de red**: Muestra "Error de conexión. Verifica tu internet"
+- **404 (Ciudad no encontrada)**: Muestra "Ciudad no encontrada. Intenta con otro nombre."
+- **401 (API Key inválida)**: Muestra "API Key inválida. Verifica tu configuración."
+- **429 (Demasiadas peticiones)**: Muestra "Límite de peticiones excedido. Intenta más tarde."
+- **Error de red**: Muestra "Error de conexión. Verifica tu internet."
 
-Lo importante es que siempre hay un fallback, entonces si One Call no funciona, la app sigue funcionando con la API tradicional.
+Algunos errores de autenticación y formato de datos fueron resueltos con apoyo de IA, lo que permitió optimizar el flujo de peticiones y asegurar respuestas más consistentes.
 
-### ¿Por qué esta Arquitectura?
+### ¿Por qué Solo la API Tradicional?
 
-1. **Resiliencia**: Si una API falla, la otra funciona
-2. **Mejor experiencia**: Cuando One Call está disponible, obtiene más datos
-3. **Flexibilidad**: Fácil cambiar entre APIs según disponibilidad
-4. **Sin interrupciones**: El usuario no nota si cambia de API
+1. **Simplicidad**: No necesito suscripción ni configuración adicional
+2. **Funcionalidad completa**: Con `/weather` y `/forecast` tengo todo lo necesario
+3. **Funciona con nombre de ciudad**: No necesito Geocoding para convertir nombres
+4. **Gratis**: La API tradicional tiene un plan gratuito generoso
 
 ---
 
 ## 🧩 Componentes Principales
 
-### App.jsx - El Coordinador
+### App.jsx – El núcleo del sistema
 
-Este componente es el que coordina todo:
+Este componente coordina todos los elementos de la aplicación:
+
 - Usa los hooks (`useWeather`, `useFavorites`, `useGeolocation`)
-- Maneja el estado global
-- Decide qué mostrar según el estado
-- Maneja eventos (búsqueda, favoritos, etc.)
+- Controla el estado global
+- Maneja los eventos principales (búsqueda, favoritos, errores, etc.)
+- Decide qué componentes mostrar en cada momento
 
 ### Componentes de Interfaz
 
-Creé varios componentes reutilizables:
-- **SearchBar**: Barra de búsqueda
-- **WeatherCard**: Información principal del clima
-- **ForecastList**: Pronóstico de 5 días
-- **FavoritesList**: Lista de favoritos
-- **HistoryList**: Historial de búsquedas
-- **Clock**: Reloj en tiempo real
-- **WeatherVideoBackground**: Videos de fondo que cambian según el clima
-- **LoadingSpinner**: Indicador de carga
-- **ErrorMessage**: Mensajes de error
+Se desarrollaron varios componentes reutilizables:
+
+- **`SearchBar`**: barra de búsqueda con validación de entrada
+- **`WeatherCard`**: muestra el clima actual con todos los detalles (temperatura, humedad, viento, presión, visibilidad, amanecer, atardecer)
+- **`ForecastList`**: despliega el pronóstico de varios días
+- **`FavoritesList`**: administra las ciudades favoritas almacenadas en `localStorage`
+- **`HistoryList`**: conserva el historial de consultas recientes
+- **`Clock`**: reloj en tiempo real con formato 12h AM/PM
+- **`WeatherVideoBackground`**: cambia los videos de fondo según las condiciones climáticas
+- **`LoadingSpinner`**: muestra un indicador de carga durante las peticiones
+- **`ErrorMessage`**: gestiona los mensajes de error de forma elegante
+
+Cada componente está separado en su propio archivo JSX y tiene su CSS correspondiente en la carpeta `components/css/`.
 
 ---
 
 ## 🎣 Hooks Personalizados
 
+Los hooks organizan la lógica y la hacen reutilizable:
+
 ### useWeather
-Maneja todo lo del clima:
-- `searchWeather(cityName)` - Busca clima por nombre
-- `searchWeatherByCoords(lat, lon)` - Busca clima por coordenadas
-- Retorna: `weather`, `forecast`, `loading`, `error`
+
+Maneja las peticiones y el estado del clima. Se encarga de:
+- Realizar búsquedas por nombre de ciudad
+- Realizar búsquedas por coordenadas (para geolocalización)
+- Gestionar estados de carga y error
+- Transformar los datos de la API en objetos `Weather` y `Forecast`
 
 ### useFavorites
-Maneja los favoritos:
-- `addFavorite()` - Agrega ciudad
-- `removeFavorite()` - Elimina ciudad
-- `isFavorite()` - Verifica si está en favoritos
-- Guarda todo en localStorage
+
+Gestiona los datos almacenados en `localStorage` para las ciudades favoritas:
+- Agregar ciudades a favoritos
+- Remover ciudades de favoritos
+- Verificar si una ciudad está en favoritos
+- Cargar favoritos al iniciar la aplicación
 
 ### useGeolocation
-Obtiene la ubicación del usuario:
-- Usa `navigator.geolocation` del navegador
-- Retorna coordenadas o error
+
+Obtiene la ubicación actual del usuario mediante el navegador usando `navigator.geolocation`:
+- Solicita permiso al usuario para acceder a su ubicación
+- Obtiene coordenadas (latitud y longitud)
+- Maneja errores de permisos o disponibilidad
+- Automáticamente busca el clima de la ubicación del usuario al cargar la app
 
 ---
 
 ## 🏗️ Modelos de Datos
 
-Son clases que representan los datos:
+Los modelos representan las entidades principales:
 
-- **Weather**: Clima actual (temperatura, humedad, viento, etc.)
-- **Forecast**: Pronóstico de un día (temperaturas, descripción, probabilidad de lluvia)
-- **City**: Ciudad guardada (nombre, país, coordenadas)
+### Weather
 
-Los modelos tienen métodos útiles como `getIconUrl()` o `getFormattedTime()`.
+Representa el clima actual de una ciudad:
+- Información básica: ciudad, país, temperatura, descripción
+- Detalles: humedad, velocidad del viento, presión atmosférica
+- Información adicional: visibilidad, nubosidad, amanecer, atardecer
+- Coordenadas geográficas
+- Métodos para formatear datos (como `getFormattedTime()` para amanecer/atardecer)
+
+### Forecast
+
+Representa el pronóstico diario:
+- Fecha del pronóstico
+- Temperatura mínima y máxima
+- Condiciones climáticas (descripción, icono)
+- Detalles adicionales: humedad, viento, probabilidad de lluvia, nubosidad
+
+### City
+
+Define los datos básicos de cada ciudad:
+- Nombre de la ciudad
+- País
+- Coordenadas (latitud, longitud)
+- ID único para identificación en favoritos
+
+Cada modelo incluye métodos para procesar y formatear los datos antes de mostrarlos en la interfaz.
 
 ---
 
 ## 🎨 Diseño Visual
 
-Como mencioné al inicio, usé IA para mejorar el diseño. La IA me ayudó con:
-- Optimizar los efectos glassmorphism (vidrio esmerilado)
-- Mejorar la distribución de componentes en pantalla
-- Sugerir colores y animaciones
-- Refinar la experiencia de usuario
+El diseño combina simplicidad y modernidad, inspirado en el entorno visual de iOS. Con la ayuda de la IA, se optimizaron aspectos como:
 
-El resultado es un diseño moderno con:
-- Efectos de vidrio esmerilado y transparencias
-- Videos de fondo que cambian según el clima
-- Colores que se adaptan al clima
-- Diseño responsive (funciona en móvil, tablet y escritorio)
+- **Glassmorphism**: Efectos de vidrio esmerilado con `backdrop-filter: blur()` y transparencias
+- **Distribución de componentes**: Uso de CSS Grid para layouts responsivos en escritorio y móvil
+- **Combinaciones de color**: Paleta de colores suaves con gradientes y sombras sutiles
+- **Videos de fondo dinámicos**: Cambian según las condiciones climáticas (soleado, lluvioso, tormenta, nublado, templado)
+- **Fluidez de la experiencia**: Transiciones suaves y animaciones sutiles
+
+El resultado es una interfaz visualmente atractiva, responsiva y coherente en distintos dispositivos. La aplicación se adapta tanto a pantallas horizontales (escritorio) como verticales (móvil), optimizando el espacio disponible.
+
+### Características de Diseño
+
+- **Responsive Design**: Grid adaptativo que cambia de 1 columna (móvil) a 3 columnas (escritorio)
+- **Tema dinámico**: Los fondos y colores cambian según el clima actual
+- **Typography**: Fuentes del sistema (`-apple-system`, `SF Pro Display`) para un look nativo
+- **Espaciado consistente**: Uso de padding y margins uniformes
+- **Iconografía**: Iconos SVG minimalistas que reemplazan emojis para mejor consistencia visual
 
 ---
 
-## 🛠️ Tecnologías Usadas
+## 🛠️ Tecnologías Utilizadas
 
-- **React 18**: Para construir la interfaz
-- **Vite**: Para desarrollo rápido
-- **OpenWeatherMap API**: Para datos del clima
-- **localStorage**: Para guardar favoritos e historial
+- **React 18** – para la interfaz interactiva y gestión de estado
+- **Vite** – entorno de desarrollo rápido y optimizado
+- **OpenWeatherMap API** – fuente de datos meteorológicos (API tradicional)
+- **localStorage** – para guardar favoritos e historial de forma persistente
+- **navigator.geolocation** – API del navegador para detección automática de ubicación
+- **CSS3** – para estilos modernos, grid, flexbox, animaciones y efectos visuales
 
 ---
 
 ## 🎓 Conclusión
 
-Esta arquitectura me permitió crear una aplicación que consume la API de OpenWeatherMap de manera eficiente y robusta. El sistema de fallback asegura que siempre funcione, incluso si alguna API no está disponible.
+El desarrollo de esta aplicación del clima me permitió explorar de manera práctica el consumo de una API real, entender su documentación técnica y aplicar buenas prácticas de arquitectura en React.
 
-La estructura modular hace que sea fácil entender y modificar el código. Los hooks personalizados permiten reutilizar lógica, y los servicios centralizan la comunicación con APIs externas.
+La lectura detallada de la documentación oficial de OpenWeatherMap fue clave para comprender su estructura, mientras que el uso de herramientas de Inteligencia Artificial resultó esencial para resolver errores, refinar el código y mejorar tanto el rendimiento como el diseño.
 
-El uso de IA en el proceso de desarrollo fue muy útil para mejorar el aspecto visual y crear una experiencia de usuario más atractiva. Sin esa ayuda, el diseño habría sido más básico.
+La arquitectura modular, la organización por componentes y la separación de responsabilidades contribuyen a que la aplicación sea funcional, estable y fácil de mantener. El uso exclusivo de la API tradicional garantiza que la aplicación funcione sin necesidad de suscripciones adicionales, mientras que el sistema de manejo de errores asegura una experiencia de usuario fluida incluso cuando algo falla.
 
-En general, estoy satisfecho con cómo quedó organizado el proyecto. La separación de responsabilidades y el sistema de fallback de APIs hacen que la aplicación sea robusta y fácil de mantener.
+En conjunto, este proyecto refleja un equilibrio entre programación, diseño y aprendizaje autónomo apoyado en tecnologías inteligentes, demostrando cómo se pueden combinar conocimientos técnicos, herramientas modernas y ayuda de IA para crear aplicaciones funcionales y visualmente atractivas.
