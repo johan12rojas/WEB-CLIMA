@@ -1,0 +1,27 @@
+# Dependencias
+node_modules/
+dist/
+build/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Archivos de configuración sensibles
+config.js
+src/config.js
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# Archivos de Vite
+.vite/
+
+# Nota: src/config.js está en .gitignore para seguridad
+# Los usuarios deben crear su propio config.js con su API key
+
