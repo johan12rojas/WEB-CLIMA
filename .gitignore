@@ -13,6 +13,7 @@ Thumbs.db
 # Archivos de configuración sensibles
 config.js
 src/config.js
+!src/config/config.js
 
 # Variables de entorno
 .env
