@@ -138,7 +138,7 @@
     grid-area: favorites;
     height: fit-content;
     max-height: 400px;
-    margin-top: -150px;
+    margin-top: 15px;
     align-self: start;
   }
 }
@@ -178,7 +178,7 @@
     grid-area: favorites;
     height: fit-content;
     max-height: 400px;
-    margin-top: -150px;
+    margin-top: 15px;
     align-self: start;
   }
 
